@@ -9,8 +9,33 @@
 |+=========================================================+
 */
 
-$Dir = 'BN';
-const COLORSRGB = [1 => [255, 214, 1], 2 => [238, 118, 0], 3 => [132, 222, 0], 4 => [88, 154, 0], 5 => [80, 193, 251], 6 => [0, 111, 207], 7 => [255, 152, 227], 8 => [243, 52, 191], 9 => [255, 45, 45], 10 => [175, 10, 10], 11 => [255, 255, 255], 12 => [192, 192, 192], 13 => [55, 55, 55], 14 => [251, 231, 172], 15 => [151, 118, 65], 16 => [194, 234, 255], 17 => [255, 241, 101], 18 => [170, 255, 125], 19 => [135, 230, 200], 20 => [152, 68, 231], 21 => [222, 169, 255], 22 => [255, 181, 121], 23 => [195, 170, 110], 24 => [122, 122, 122]];
+$Dir = 'badgeparts';
+const BASECOLORSRGB = [
+1  =>  [255, 214, 1],
+2  =>  [236, 118, 0],
+3  =>  [132, 222, 0],
+4  =>  [88, 154, 0],
+5  =>  [80, 193, 251],
+6  =>  [0, 111, 207],
+7  =>  [255, 152, 227],
+8  =>  [243, 52, 191],
+9  =>  [255, 45, 45],
+10  =>  [175, 10, 10],
+11  =>  [255, 255, 255],
+12  =>  [192, 192, 192],
+13  =>  [55, 55, 55],
+14  =>  [251, 231, 172],
+15  =>  [151, 118, 65],
+16  =>  [194, 234, 255],
+17  =>  [255, 241, 101],
+18  =>  [170, 255, 125],
+19  =>  [135, 230, 200],
+20  =>  [152, 68, 231],
+21  =>  [222, 169, 255],
+22  =>  [255, 181, 121],
+23  =>  [195, 170, 110],
+24  =>  [122, 122, 122]
+];
 const UNPAINTABLE = [209, 210, 211, 212];
 
 //Methods
@@ -22,11 +47,16 @@ function GetParts($partCode, $isSymbol = false) {
 		return null;
 
 	$partKey = substr($partCode, 0, (strlen($partCode) == 6 || (!$isSymbol && strlen($partCode) == 5)) ? 3 : 2);
+	
 	$partColor = (int)substr($partCode, strlen($partKey), 2);
+	
+	if(strlen($partKey) > 2 && $partKey[0] == '0')
+		$partKey = substr($partCode, 1, 2); // remove leading 0
+	
 	if ($len > strlen($partKey) + 2)
 		$partPos = (int)substr($partCode, -1, 1);
 
-	return [$partKey, COLORSRGB[$partColor] ?? '', $partPos ?? 0];
+	return [$partKey, BASECOLORSRGB[$partColor] ?? '', $partPos ?? 0];
 }
 
 function CheckStr($str) {
@@ -70,8 +100,6 @@ if ($Symbols)
 	$Parts = explode('s', $BadgeCode);
 	$BaseCode = str_replace('b', '', $Parts[0]);
 
-	if (strlen($BaseCode) < 4 && strlen($BaseCode) > 5)
-		exit;
 	unset($Parts[0]);
 
 	foreach($Parts as $k => $p)
@@ -84,7 +112,7 @@ if ($Symbols)
 else
 {
 	$BaseCode = str_replace('b', '', $BadgeCode);
-	if (strlen($BaseCode) < 3 || strlen($BaseCode) > 5)
+	if (strlen($BaseCode) < 2 || strlen($BaseCode) > 6)
 		exit;
 }
 
